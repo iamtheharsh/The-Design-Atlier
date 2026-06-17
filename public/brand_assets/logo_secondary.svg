@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 650 150" width="100%" height="100%">
+  <!-- Style Definitions for Fonts and Smooth Rendering -->
+  <style>
+    .gold-stroke { stroke: #C9A86A; stroke-width: 1.0; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .gold-fill { fill: #C9A86A; }
+    .charcoal-fill { fill: #2D2A26; }
+    .grey-fill { fill: #6B675F; }
+    .serif-text { font-family: 'Cormorant Garamond', 'Playfair Display', 'Didot', serif; }
+    .sans-text { font-family: 'Inter', 'Manrope', sans-serif; }
+  </style>
+
+  <!-- ICON CONTAINER (Left Side, scaled to 110px height) -->
+  <g id="logo-mark" transform="translate(10, 15)">
+    <!-- House Outline (Gold) -->
+    <path d="M 30,110 L 30,52.5 L 65,22.5 L 100,52.5 L 100,110" class="gold-stroke" />
+
+    <!-- Inner Elegant Archway -->
+    <path d="M 40,110 L 40,62 A 25,25 0 0,1 90,62 L 90,110" class="gold-stroke" />
+
+    <!-- Hanging Lamp -->
+    <line x1="96" y1="49" x2="96" y2="77.5" class="gold-stroke" />
+    <path d="M 93,77.5 A 3,3 0 0,0 99,77.5 Z" class="gold-fill" />
+
+    <!-- Console Table Detail -->
+    <path d="M 85,95 L 105,95 M 87,95 L 87,110 M 102,95 L 102,110" class="gold-stroke" />
+    <circle cx="98" cy="92.5" r="1.5" class="gold-fill" />
+    <path d="M 98,91 C 97,87 95,85 94,84 M 98,91 C 99,87 101,85 102,84" class="gold-stroke" />
+
+    <!-- Monogram DA -->
+    <text x="35" y="98" class="charcoal-fill serif-text" font-size="48" font-weight="300" letter-spacing="-1">D</text>
+    <text x="53" y="105" class="charcoal-fill serif-text" font-size="48" font-weight="300" letter-spacing="-1">A</text>
+  </g>
+
+  <!-- WORDMARK & TYPOGRAPHY (Right Side, shifted) -->
+  <g id="typography" transform="translate(140, 10)">
+    <!-- "THE" with thin gold line -->
+    <text x="0" y="42" class="grey-fill sans-text" font-size="12" font-weight="400" letter-spacing="8">THE</text>
+    <line x1="55" y1="38" x2="220" y2="38" class="gold-stroke" />
+
+    <!-- Primary Brand Name "DESIGN ATELIER" -->
+    <text x="0" y="86" class="charcoal-fill serif-text" font-size="38" font-weight="400" letter-spacing="3">DESIGN ATELIER</text>
+
+    <!-- Subtitle "INTERIOR DESIGN STUDIO" -->
+    <text x="2" y="112" class="gold-fill sans-text" font-size="11" font-weight="500" letter-spacing="7">INTERIOR DESIGN STUDIO</text>
+  </g>
+</svg>
