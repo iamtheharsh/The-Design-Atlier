@@ -2,8 +2,12 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-export default function Team() {
+export default function Team({ data, layout }) {
   const containerRef = useRef(null);
+
+  const subtitle = data?.subtitle || "STUDIO TALENT";
+  const title = data?.title || "Our Design Collective";
+  const list = Array.isArray(data) ? data : (data?.list || []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -25,7 +29,7 @@ export default function Team() {
       );
 
       // Staggered cards reveal
-      gsap.fromTo(".team-card",
+      gsap.fromTo(".team-card, .team-staggered-card",
         { opacity: 0, y: 50 },
         {
           opacity: 1,
@@ -34,7 +38,7 @@ export default function Team() {
           ease: "power3.out",
           stagger: 0.12,
           scrollTrigger: {
-            trigger: ".team-grid",
+            trigger: layout === 'staggered' ? ".team-staggered-grid" : ".team-grid",
             start: "top 75%",
             toggleActions: "play none none none"
           }
@@ -43,34 +47,7 @@ export default function Team() {
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
-
-  const team = [
-    {
-      name: "Ariana Verra",
-      role: "Founder & Creative Director",
-      desc: "Architect and lead strategist with 15+ years experience designing bespoke apartments and residences globally.",
-      img: "/images/founder_ariana.png"
-    },
-    {
-      name: "Kabir Mehta",
-      role: "Project Architect",
-      desc: "Structural layouts coordinator mapping floor plan structures, structural changes, and daylight vectors.",
-      img: "/images/team/kabir.jpg"
-    },
-    {
-      name: "Ananya Sen",
-      role: "Senior Interior Designer",
-      desc: "Curates material palettes, sourcing textures, heavy linen drapery, stones, and lighting combinations.",
-      img: "/images/team/ananya.jpg"
-    },
-    {
-      name: "Rohan Sharma",
-      role: "Site Execution Lead",
-      desc: "Manages on-site contractors, custom joinery fabrications, civil changes, and final turnkey checks.",
-      img: "/images/team/rohan.png"
-    }
-  ];
+  }, [layout, data]);
 
   return (
     <section 
@@ -81,18 +58,15 @@ export default function Team() {
       <div className="container">
         {/* Title */}
         <div className="section-title-wrapper">
-          <span className="subtitle">STUDIO TALENT</span>
-          <h2>Our Design Collective</h2>
+          <span className="subtitle">{subtitle}</span>
+          <h2>{title}</h2>
         </div>
 
-        {/* Team Grid */}
-        <div className="team-grid">
-          {team.map((member, index) => {
-            return (
-              <div 
-                key={index} 
-                className="team-card"
-              >
+        {layout === 'staggered' ? (
+          /* Layout: Staggered Depth portraits */
+          <div className="team-staggered-grid">
+            {list.map((member, index) => (
+              <div key={index} className="team-staggered-card">
                 <div className="team-img-wrapper">
                   <img src={member.img} alt={member.name} className="team-img" />
                   <div className="team-card-overlay"></div>
@@ -103,9 +77,31 @@ export default function Team() {
                   <p className="team-desc">{member.desc}</p>
                 </div>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        ) : (
+          /* Layout: Portrait Grid (Classic) */
+          <div className="team-grid">
+            {list.map((member, index) => {
+              return (
+                <div 
+                  key={index} 
+                  className="team-card"
+                >
+                  <div className="team-img-wrapper">
+                    <img src={member.img} alt={member.name} className="team-img" />
+                    <div className="team-card-overlay"></div>
+                  </div>
+                  <div className="team-info">
+                    <span className="team-role">{member.role}</span>
+                    <h3 className="team-name">{member.name}</h3>
+                    <p className="team-desc">{member.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <style>{`
@@ -123,17 +119,7 @@ export default function Team() {
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
-          background-color: var(--color-bg-primary);
-          border: 1px solid var(--color-border);
-          padding: 1rem;
-          transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), 
-                      opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), 
-                      border-color 0.4s ease;
-        }
-
-        .team-card:hover {
-          border-color: var(--color-accent);
-          transform: translateY(-5px);
+          text-align: left;
         }
 
         .team-img-wrapper {
@@ -151,7 +137,7 @@ export default function Team() {
           transition: transform var(--transition-smooth);
         }
 
-        .team-card:hover .team-img {
+        .team-card:hover .team-img, .team-staggered-card:hover .team-img {
           transform: scale(1.03);
         }
 

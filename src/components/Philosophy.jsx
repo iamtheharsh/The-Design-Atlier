@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-export default function Philosophy() {
+export default function Philosophy({ data, layout }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -28,40 +28,45 @@ export default function Philosophy() {
         "-=0.6"
       );
 
-      // Right column sliding block clip-path image reveal
-      gsap.fromTo(".philosophy-image-wrapper",
-        { clipPath: "inset(0 100% 0 0)", scale: 1.12 },
-        {
-          clipPath: "inset(0 0% 0 0)",
-          scale: 1.0,
-          duration: 1.8,
-          ease: "power4.inOut",
-          scrollTrigger: {
-            trigger: ".philosophy-right",
-            start: "top 80%",
-            toggleActions: "play none none none"
+      if (layout === 'sliding') {
+        // Right column sliding block clip-path image reveal
+        gsap.fromTo(".philosophy-image-wrapper",
+          { clipPath: "inset(0 100% 0 0)", scale: 1.12 },
+          {
+            clipPath: "inset(0 0% 0 0)",
+            scale: 1.0,
+            duration: 1.8,
+            ease: "power4.inOut",
+            scrollTrigger: {
+              trigger: ".philosophy-right",
+              start: "top 80%",
+              toggleActions: "play none none none"
+            }
           }
-        }
-      );
+        );
+      } else {
+        // Editorial visuals stagger reveal
+        gsap.fromTo([".editorial-img-back", ".editorial-img-front"],
+          { opacity: 0, y: 40, scale: 1.05 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 1.5,
+            ease: "power3.out",
+            stagger: 0.2,
+            scrollTrigger: {
+              trigger: ".philosophy-editorial-visuals",
+              start: "top 80%",
+              toggleActions: "play none none none"
+            }
+          }
+        );
+      }
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
-
-  const pillars = [
-    {
-      title: "Lifestyle Creation",
-      desc: "We do not simply arrange furniture. We configure spaces to align with your daily habits, lighting conditions, and spatial ergonomics, making everyday routines feel frictionless and beautiful."
-    },
-    {
-      title: "Emotional Resonance",
-      desc: "Great interiors shape how you feel. We curate warm, minimal environments that offer sensory comfort—sanctuaries that evoke peace, focus, and exclusivity the moment you cross the threshold."
-    },
-    {
-      title: "Enduring Value",
-      desc: "We prioritize structural longevity. By selecting high-grade raw timbers, Italian quartz, and brushed metal alloys, we build custom joinery and fixtures designed to appreciate in value for decades."
-    }
-  ];
+  }, [layout, data]);
 
   return (
     <section 
@@ -70,39 +75,63 @@ export default function Philosophy() {
       className="philosophy-section section"
     >
       <div className="container">
-        <div className="philosophy-grid">
-          {/* Left Column: Narrative Copy */}
-          <div className="philosophy-left">
-            <span className="subtitle">STUDIO MANIFESTO</span>
-            <h2>Design Beyond Decoration</h2>
-            <p className="philosophy-intro">
-              We believe a home is a three-dimensional portrait of its owner. Our philosophy rejects transient styling trends, focusing instead on spatial honesty, tactile richness, and structural functionality.
-            </p>
-
-            <div className="philosophy-pillars-list">
-              {pillars.map((pillar, i) => (
-                <div key={i} className="philosophy-pillar">
-                  <h3 className="pillar-title">{pillar.title}</h3>
-                  <p className="pillar-desc">{pillar.desc}</p>
-                </div>
-              ))}
+        {layout === 'editorial' ? (
+          /* Layout: Editorial Overlap */
+          <div className="philosophy-editorial">
+            <div className="philosophy-editorial-visuals">
+              <img src={data.img} alt="Textured architectural background layer" className="editorial-img-back" />
+              <img src={data.img} alt="Fine architectural focus layer" className="editorial-img-front" />
             </div>
-          </div>
+            
+            <div className="philosophy-left">
+              <span className="subtitle">{data.subtitle}</span>
+              <h2>{data.title}</h2>
+              <p className="philosophy-intro">{data.intro}</p>
 
-          {/* Right Column: Architectural Image Composition */}
-          <div className="philosophy-right">
-            <div className="philosophy-image-wrapper">
-              <img 
-                src="/images/philosophy_detail.jpg" 
-                alt="Tactile timber textures and minimal architectural joints" 
-                className="philosophy-img"
-              />
-              <div className="philosophy-image-badge">
-                <span>WARM MINIMALISM</span>
+              <div className="philosophy-pillars-list" style={{ marginTop: '2.5rem' }}>
+                {data.pillars.map((pillar, i) => (
+                  <div key={i} className="philosophy-pillar">
+                    <h3 className="pillar-title">{pillar.title}</h3>
+                    <p className="pillar-desc">{pillar.desc}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        </div>
+        ) : (
+          /* Layout: Sliding Wipes (Classic) */
+          <div className="philosophy-grid">
+            {/* Left Column: Narrative Copy */}
+            <div className="philosophy-left">
+              <span className="subtitle">{data.subtitle}</span>
+              <h2>{data.title}</h2>
+              <p className="philosophy-intro">{data.intro}</p>
+
+              <div className="philosophy-pillars-list">
+                {data.pillars.map((pillar, i) => (
+                  <div key={i} className="philosophy-pillar">
+                    <h3 className="pillar-title">{pillar.title}</h3>
+                    <p className="pillar-desc">{pillar.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Column: Architectural Image Composition */}
+            <div className="philosophy-right">
+              <div className="philosophy-image-wrapper">
+                <img 
+                  src={data.img} 
+                  alt="Tactile textures and minimal architectural lines" 
+                  className="philosophy-img"
+                />
+                <div className="philosophy-image-badge">
+                  <span>{data.badge || 'WARM MINIMALISM'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <style>{`

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Footer() {
+export default function Footer({ data, layout }) {
   const links = [
     { name: 'Home', href: '#home' },
     { name: 'Why Us', href: '#why-us' },
@@ -12,6 +12,66 @@ export default function Footer() {
     { name: 'FAQ', href: '#faq' }
   ];
 
+  const phone = data?.phone || '+91 98765 43210';
+  const email = data?.email || 'design@theatelier.com';
+  const address = data?.address || 'Level 5, Juhu Horizon, Juhu Tara Road, Mumbai 400049';
+  const tagline = data?.desc || "Designing spaces that feel like home.";
+
+  // Determine active niche based on email details
+  let secondaryTitle = "AREAS SERVED";
+  let secondaryList = ["South Mumbai", "Bandra West", "Juhu", "Worli Sea Face", "Lower Parel", "Alibaug Villas"];
+
+  if (email.includes('architecture')) {
+    secondaryTitle = "PRACTICE AREAS";
+    secondaryList = ["Residential Estates", "Commercial Landmarks", "Sustainable Facades", "BIM Development", "Urban Contours"];
+  } else if (email.includes('creative') || email.includes('agency')) {
+    secondaryTitle = "STUDIO FOCUS";
+    secondaryList = ["Brand Strategy", "UI/UX Design", "Custom Typography", "Motion Graphics", "Frontend Architecture"];
+  } else if (email.includes('support') || email.includes('saas')) {
+    secondaryTitle = "PLATFORM HUB";
+    secondaryList = ["Cloud Operations", "SOC-2 Verification", "Figma Integration", "SaaS Licensing", "Team Collaborations"];
+  }
+
+  if (layout === 'minimal') {
+    return (
+      <footer className="footer-minimal">
+        <div className="container">
+          <div className="footer-minimal-grid">
+            {/* Minimal Logo */}
+            <img src="/brand_assets/logo_primary.svg" alt="The Design Atelier Logo" className="footer-minimal-logo" />
+            
+            {/* Closing statement */}
+            <div className="footer-minimal-closing">
+              {tagline}
+            </div>
+
+            {/* Navigation Links */}
+            <ul className="footer-minimal-links">
+              {links.map((link, i) => (
+                <li key={i}>
+                  <a href={link.href} className="footer-minimal-link">
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            {/* Bottom Row */}
+            <div className="footer-minimal-bottom">
+              <span>
+                &copy; {new Date().getFullYear()} The Design Atelier. All rights reserved.
+              </span>
+              <span>
+                Quiet Luxury, Warm Minimalism.
+              </span>
+            </div>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
+  // Layout: columns (default)
   return (
     <footer className="footer">
       <div className="container">
@@ -20,7 +80,7 @@ export default function Footer() {
           {/* Logo column */}
           <div className="footer-logo-col">
             <img src="/brand_assets/logo_primary.svg" alt="The Design Atelier Logo" className="footer-logo" />
-            <p className="footer-tagline">Designing spaces that feel like home.</p>
+            <p className="footer-tagline">{tagline}</p>
           </div>
 
           {/* Links Column */}
@@ -37,16 +97,13 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Suburbs Served Column */}
+          {/* Suburbs/Practice Focus Column */}
           <div className="footer-suburbs-col">
-            <span className="footer-title">AREAS SERVED</span>
+            <span className="footer-title">{secondaryTitle}</span>
             <ul className="footer-suburbs-list">
-              <li>South Mumbai</li>
-              <li>Bandra West</li>
-              <li>Juhu</li>
-              <li>Worli Sea Face</li>
-              <li>Lower Parel</li>
-              <li>Alibaug Villas</li>
+              {secondaryList.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
             </ul>
           </div>
 
@@ -54,10 +111,10 @@ export default function Footer() {
           <div className="footer-contact-col">
             <span className="footer-title">CONTACT</span>
             <div className="footer-contact-info">
-              <a href="tel:+919876543210" className="footer-contact-link">+91 98765 43210</a>
-              <a href="mailto:design@theatelier.com" className="footer-contact-link">design@theatelier.com</a>
+              <a href={`tel:${phone.replace(/\s+/g, '')}`} className="footer-contact-link">{phone}</a>
+              <a href={`mailto:${email}`} className="footer-contact-link">{email}</a>
               <p className="footer-address">
-                Level 5, Juhu Horizon, Juhu Tara Road, Mumbai 400049
+                {address}
               </p>
             </div>
             

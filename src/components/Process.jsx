@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-export default function Process() {
+export default function Process({ data, layout }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -31,116 +31,147 @@ export default function Process() {
         }
       );
 
-      // Scroll-bound line progress scrubbing
-      gsap.fromTo(".process-line",
-        { 
-          scaleX: isDesktop ? 0 : 1, 
-          scaleY: isDesktop ? 1 : 0 
-        },
-        {
-          scaleX: 1,
-          scaleY: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".process-timeline-container",
-            start: "top 60%",
-            end: "bottom 60%",
-            scrub: true
+      // Layout: Timeline reveals
+      if (layout === 'timeline') {
+        // Scroll-bound line progress scrubbing
+        gsap.fromTo(".process-line",
+          { 
+            scaleX: isDesktop ? 0 : 1, 
+            scaleY: isDesktop ? 1 : 0 
+          },
+          {
+            scaleX: 1,
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: ".process-timeline-container",
+              start: "top 60%",
+              end: "bottom 60%",
+              scrub: true
+            }
           }
-        }
-      );
+        );
 
-      // Staggered steps entrance
-      gsap.fromTo(".process-step",
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: "power3.out",
-          stagger: 0.15,
-          scrollTrigger: {
-            trigger: ".process-steps",
-            start: "top 75%",
-            toggleActions: "play none none none"
+        // Staggered steps entrance
+        gsap.fromTo(".process-step",
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: "power3.out",
+            stagger: 0.15,
+            scrollTrigger: {
+              trigger: ".process-steps",
+              start: "top 75%",
+              toggleActions: "play none none none"
+            }
           }
-        }
-      );
+        );
+      }
+
+      // Layout: Transformation reveals
+      if (layout === 'transformation') {
+        gsap.fromTo([".transformation-info-col", ".transformation-steps-col"],
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.4,
+            ease: "power3.out",
+            stagger: 0.2,
+            scrollTrigger: {
+              trigger: ".transformation-showcase",
+              start: "top 75%",
+              toggleActions: "play none none none"
+            }
+          }
+        );
+      }
     }, containerRef);
 
     return () => mm.revert();
-  }, []);
-
-  const steps = [
-    {
-      num: '01',
-      title: 'Discovery',
-      subtitle: 'Consultation & Site Review',
-      desc: 'We conduct a thorough alignment meeting to map your functional preferences, budget requirements, lifestyle behaviors, and perform exact site measurements.'
-    },
-    {
-      num: '02',
-      title: 'Concept',
-      subtitle: 'Space Planning & Moods',
-      desc: 'Our architects draft initial 2D layout options, traffic flow maps, and curated texture boards (wood, stone, metal options) to define the design direction.'
-    },
-    {
-      num: '03',
-      title: 'Design',
-      subtitle: '3D Renderings & Specifications',
-      desc: 'We generate photorealistic 3D visual models and detailed technical drawings. Every single piece of furniture, paint code, and stone finish is documented.'
-    },
-    {
-      num: '04',
-      title: 'Execution',
-      subtitle: 'Craftsmanship & Auditing',
-      desc: 'Our trusted engineers take over construction, managing custom millwork fabrication, electrical mapping, and stone installations with rigorous quality audits.'
-    },
-    {
-      num: '05',
-      title: 'Handover',
-      subtitle: 'Styling & Reveal',
-      desc: 'We perform complete professional deep cleaning, curate artwork and styling placements, and hand over your timeless new sanctuary keys.'
-    }
-  ];
+  }, [layout, data]);
 
   return (
     <section ref={containerRef} id="process" className="process-section section">
       <div className="container">
         {/* Title */}
         <div className="section-title-wrapper">
-          <span className="subtitle">METHODOLOGY</span>
-          <h2>The Execution Journey</h2>
+          <span className="subtitle">{data.subtitle}</span>
+          <h2>{data.title}</h2>
         </div>
 
-        {/* Timeline Container */}
-        <div className="process-timeline-container">
-          {/* Connector Line (Scrub animated) */}
-          <div className="process-line"></div>
+        {/* Layout: Before & After Transformation */}
+        {layout === 'transformation' && (
+          <div className="transformation-showcase">
+            <div className="transformation-info-col">
+              <div className="comparison-box-header">
+                <h4>Visual Transformation Study</h4>
+                <p>Witness the shift from structural grid layouts to custom turnkey handovers.</p>
+              </div>
+              <div className="comparison-split-wrapper">
+                <div className="comparison-card">
+                  <img src={data.beforeImg} alt="Before state shell" />
+                  <span className="comparison-label-badge">{data.beforeLabel}</span>
+                </div>
+                <div className="comparison-card">
+                  <img src={data.afterImg} alt="After state completed design" />
+                  <span className="comparison-label-badge">{data.afterLabel}</span>
+                </div>
+              </div>
+            </div>
 
-          {/* Steps */}
-          <div className="process-steps">
-            {steps.map((step, index) => {
-              return (
-                <div key={index} className="process-step">
-                  {/* Visual Node */}
-                  <div className="step-node-wrapper">
-                    <div className="step-node">
-                      <span className="step-node-number">{step.num}</span>
+            <div className="transformation-steps-col">
+              <div className="philosophy-pillars-list" style={{ gap: '1.5rem' }}>
+                {data.list.map((step, i) => (
+                  <div key={i} className="philosophy-pillar" style={{ borderLeftColor: 'var(--color-accent)' }}>
+                    <span className="step-subtitle" style={{ fontSize: '0.65rem', color: 'var(--color-accent)' }}>
+                      {step.phase} ({step.duration})
+                    </span>
+                    <h3 className="pillar-title" style={{ fontSize: '1.15rem', textTransform: 'none', margin: '0.25rem 0' }}>
+                      {step.title}
+                    </h3>
+                    <p className="pillar-desc" style={{ fontSize: '0.85rem' }}>
+                      {step.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Layout: Timeline progress tracks (Classic) */}
+        {layout === 'timeline' && (
+          <div className="process-timeline-container">
+            {/* Connector Line (Scrub animated) */}
+            <div className="process-line"></div>
+
+            {/* Steps */}
+            <div className="process-steps">
+              {data.list.map((step, index) => {
+                return (
+                  <div key={index} className="process-step">
+                    {/* Visual Node */}
+                    <div className="step-node-wrapper">
+                      <div className="step-node">
+                        <span className="step-node-number">{step.num}</span>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="step-content">
+                      <span className="step-subtitle">{step.phase}</span>
+                      <h3 className="step-title">{step.title}</h3>
+                      <p className="step-desc">{step.desc}</p>
                     </div>
                   </div>
-
-                  {/* Content */}
-                  <div className="step-content">
-                    <span className="step-subtitle">{step.subtitle}</span>
-                    <h3 className="step-title">{step.title}</h3>
-                    <p className="step-desc">{step.desc}</p>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <style>{`
@@ -248,18 +279,14 @@ export default function Process() {
         }
 
         @media (max-width: 991px) {
+          /* Convert line to vertical track (Mobile) */
           .process-line {
-            display: block;
-            position: absolute;
-            top: 30px;
-            bottom: 30px;
-            left: 30px; /* Centered with vertical nodes */
+            top: 0;
+            left: 35px;
+            right: auto;
             width: 1px;
-            height: auto;
-            background-color: var(--color-border);
-            z-index: 1;
+            height: calc(100% - 70px);
             transform-origin: top;
-            will-change: transform;
           }
 
           .process-steps {
@@ -269,26 +296,19 @@ export default function Process() {
 
           .process-step {
             flex-direction: row;
-            align-items: flex-start;
-            gap: 2rem;
+            gap: 3rem;
+            align-items: center;
           }
 
           .step-node-wrapper {
-            width: auto;
-          }
-
-          .step-node {
-            width: 60px;
-            height: 60px;
-            flex-shrink: 0;
+            width: 70px;
           }
 
           .step-content {
-            padding-top: 0.5rem;
+            width: calc(100% - 140px);
           }
         }
       `}</style>
     </section>
   );
 }
-

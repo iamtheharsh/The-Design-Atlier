@@ -316,5 +316,763 @@ a {
   scrollbar-width: none;
 }
 
+/* ==========================================
+   1. HERO LAYOUT VARIATIONS
+   ========================================== */
+
+/* Full Bleed Hero */
+.hero-fullbleed {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-align: center;
+}
+
+.hero-fullbleed-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-fullbleed-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-fullbleed-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(37, 53, 69, 0.4), rgba(37, 53, 69, 0.8));
+  z-index: 2;
+}
+
+.hero-fullbleed-content {
+  position: relative;
+  z-index: 3;
+  max-width: 800px;
+  padding: 0 2rem;
+  color: #FFFFFF;
+}
+
+.hero-fullbleed-content h1 {
+  color: #FFFFFF !important;
+  font-size: clamp(3rem, 7vw, 5rem);
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.hero-fullbleed-content p {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Asymmetric Hero */
+.hero-asymmetric {
+  display: flex;
+  align-items: center;
+  padding: 120px 0 80px 0;
+  min-height: 100vh;
+}
+
+.asymmetric-grid {
+  display: grid;
+  grid-template-columns: 55% 45%;
+  align-items: center;
+  gap: 4rem;
+  width: 100%;
+}
+
+.asymmetric-images-wrapper {
+  position: relative;
+  height: 600px;
+}
+
+.asym-img-main {
+  width: 75%;
+  height: 80%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.asym-img-floating {
+  width: 50%;
+  height: 60%;
+  object-fit: cover;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: 10px solid var(--color-bg-primary);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+  z-index: 2;
+}
+
+/* Stacked Grid Hero */
+.hero-stacked {
+  padding: 140px 0 80px 0;
+  text-align: center;
+  min-height: 100vh;
+}
+
+.hero-stacked-header {
+  max-width: 800px;
+  margin: 0 auto 4rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.hero-stacked-header h1 {
+  font-size: clamp(3rem, 6.5vw, 4.8rem);
+  line-height: 1.1;
+}
+
+.stacked-images-showcase {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1fr;
+  gap: 2rem;
+  height: 480px;
+}
+
+.stacked-showcase-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.06);
+  transition: transform 0.4s ease;
+}
+
+.stacked-showcase-img:hover {
+  transform: scale(1.02);
+}
+
+/* ==========================================
+   2. BENTO & STACKED SERVICES LAYOUTS
+   ========================================== */
+
+/* Bento Grid Services */
+.services-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: 240px;
+  gap: 1.5rem;
+  width: 100%;
+  margin-top: 3rem;
+}
+
+.bento-card {
+  position: relative;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  transition: var(--transition-smooth);
+  height: 100%;
+}
+
+.bento-card:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.03);
+}
+
+.bento-card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.bento-card-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 6s ease;
+}
+
+.bento-card:hover .bento-card-bg img {
+  transform: scale(1.04);
+}
+
+.bento-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(37, 53, 69, 0.65) 30%, rgba(37, 53, 69, 0.1));
+  z-index: 2;
+}
+
+.bento-card-content {
+  position: relative;
+  z-index: 3;
+  color: var(--color-text-heading);
+  transition: color 0.3s ease;
+}
+
+.bento-card-bg ~ .bento-card-content {
+  color: #FFFFFF !important;
+}
+
+.bento-card-bg ~ .bento-card-content h3 {
+  color: #FFFFFF !important;
+}
+
+.bento-card-bg ~ .bento-card-content p {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.bento-card-title {
+  font-family: var(--font-headings);
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  font-weight: 350;
+}
+
+.bento-card-desc {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.bento-card-num {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  font-family: var(--font-headings);
+  font-size: 1.15rem;
+  font-weight: 300;
+  opacity: 0.6;
+}
+
+/* Col spans for Bento layout */
+.col-span-8 { grid-column: span 8; }
+.col-span-4 { grid-column: span 4; }
+.col-span-6 { grid-column: span 6; }
+.col-span-5 { grid-column: span 5; }
+.col-span-7 { grid-column: span 7; }
+.row-span-2 { grid-row: span 2; }
+
+/* Stacked List Services */
+.services-stacked-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-border);
+  margin-top: 3rem;
+}
+
+.stacked-list-row {
+  display: grid;
+  grid-template-columns: 10% 35% 55%;
+  padding: 3rem 0;
+  border-bottom: 1px solid var(--color-border);
+  align-items: center;
+  transition: background-color 0.4s ease;
+}
+
+.stacked-list-row:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.stacked-row-num {
+  font-family: var(--font-headings);
+  font-size: 1.5rem;
+  color: var(--color-accent);
+}
+
+.stacked-row-title h3 {
+  font-family: var(--font-headings);
+  font-size: 1.75rem;
+  font-weight: 300;
+}
+
+.stacked-row-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3rem;
+}
+
+.stacked-row-desc {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-text-body);
+  margin: 0;
+}
+
+.stacked-row-img-preview {
+  width: 150px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 2px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.4s ease;
+}
+
+.stacked-list-row:hover .stacked-row-img-preview {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ==========================================
+   3. EDITORIAL & OVERLAPPING MANIFESTO
+   ========================================== */
+
+.philosophy-editorial {
+  display: grid;
+  grid-template-columns: 45% 55%;
+  gap: 5rem;
+  align-items: center;
+}
+
+.philosophy-editorial-visuals {
+  position: relative;
+  height: 520px;
+}
+
+.editorial-img-back {
+  width: 80%;
+  height: 75%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.editorial-img-front {
+  width: 65%;
+  height: 65%;
+  object-fit: cover;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: 15px solid var(--color-bg-primary);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+/* ==========================================
+   4. MASONRY PORTFOLIO LAYOUTS
+   ========================================== */
+
+.masonry-columns-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 100%;
+}
+
+.masonry-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.portfolio-card-masonry {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  transition: var(--transition-smooth);
+}
+
+.portfolio-card-masonry:hover {
+  transform: translateY(-5px);
+  border-color: var(--color-accent);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.03);
+}
+
+.masonry-img-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.masonry-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 6s ease;
+}
+
+.portfolio-card-masonry:hover .masonry-img {
+  transform: scale(1.04);
+}
+
+.masonry-content {
+  padding: 1.5rem;
+}
+
+.masonry-title {
+  font-family: var(--font-headings);
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+  font-weight: 450;
+}
+
+.masonry-meta {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-text-body);
+}
+
+/* ==========================================
+   5. BEFORE / AFTER COMPARISON PROCESS
+   ========================================== */
+
+.transformation-showcase {
+  margin-top: 4rem;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  gap: 3rem;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-secondary);
+  padding: 3rem;
+}
+
+.comparison-box-header {
+  margin-bottom: 1.5rem;
+}
+
+.comparison-box-header h4 {
+  font-family: var(--font-headings);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 350;
+}
+
+.comparison-box-header p {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-text-body);
+}
+
+.comparison-split-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.comparison-card {
+  position: relative;
+  overflow: hidden;
+  height: 380px;
+}
+
+.comparison-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.comparison-label-badge {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  background-color: rgba(37, 53, 69, 0.85);
+  color: #FFFFFF;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ==========================================
+   6. STAGGERED TEAM PORTRAITS
+   ========================================== */
+
+.team-staggered-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.5rem;
+  margin-top: 3rem;
+}
+
+.team-staggered-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.4s ease;
+}
+
+.team-staggered-card:nth-child(even) {
+  transform: translateY(40px);
+}
+
+.team-staggered-card:hover {
+  transform: translateY(-5px);
+}
+
+.team-staggered-card:nth-child(even):hover {
+  transform: translateY(35px);
+}
+
+/* ==========================================
+   7. DEPTH STACKED TESTIMONIALS
+   ========================================== */
+
+.depth-stacked-container {
+  position: relative;
+  height: 420px;
+  width: 100%;
+  max-width: 720px;
+  margin: 4rem auto 0 auto;
+}
+
+.depth-stacked-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  padding: 3.5rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform-origin: bottom center;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+              z-index 0.6s ease;
+}
+
+.depth-stacked-quote {
+  font-family: var(--font-headings);
+  font-size: 1.45rem;
+  line-height: 1.6;
+  font-style: italic;
+  color: var(--color-text-heading);
+}
+
+.depth-stacked-author-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+}
+
+.depth-stacked-author {
+  font-family: var(--font-headings);
+  font-size: 1.2rem;
+  color: var(--color-text-heading);
+}
+
+.depth-stacked-project {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+}
+
+.depth-stacked-nav-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.depth-nav-btn {
+  background: none;
+  border: 1px solid var(--color-text-heading);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: var(--color-text-heading);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.depth-nav-btn:hover {
+  background-color: var(--color-text-heading);
+  color: var(--color-bg-primary);
+}
+
+/* ==========================================
+   8. MINIMAL EDITORIAL FOOTER
+   ========================================== */
+
+.footer-minimal {
+  background-color: var(--color-bg-primary);
+  border-top: 1px solid var(--color-border);
+  padding: 80px 0 40px 0;
+}
+
+.footer-minimal-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3.5rem;
+  text-align: center;
+}
+
+.footer-minimal-logo {
+  width: 160px;
+  height: auto;
+}
+
+.footer-minimal-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  list-style: none;
+  gap: 3rem;
+}
+
+.footer-minimal-link {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--color-text-body);
+  transition: var(--transition-fast);
+}
+
+.footer-minimal-link:hover {
+  color: var(--color-accent);
+}
+
+.footer-minimal-closing {
+  font-family: var(--font-headings);
+  font-size: 2.2rem;
+  font-weight: 300;
+  max-width: 700px;
+  line-height: 1.3;
+  color: var(--color-text-heading);
+}
+
+.footer-minimal-bottom {
+  width: 100%;
+  border-top: 1px solid var(--color-border);
+  padding-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: rgba(37, 53, 69, 0.4);
+}
+
+/* ==========================================
+   9. RESPONSIVE UPDATES
+   ========================================== */
+
+@media (max-width: 991px) {
+  .asymmetric-grid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .asymmetric-images-wrapper {
+    height: 480px;
+  }
+  .stacked-images-showcase {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 1.5rem;
+  }
+  .stacked-images-showcase img {
+    height: 300px;
+  }
+  .services-bento-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+  .bento-card {
+    height: 280px;
+    grid-column: span 12 !important;
+  }
+  .stacked-list-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 2rem 0;
+  }
+  .stacked-row-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .stacked-row-img-preview {
+    display: none;
+  }
+  .philosophy-editorial {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  .philosophy-editorial-visuals {
+    height: 400px;
+  }
+  .masonry-columns-container {
+    grid-template-columns: 1fr;
+  }
+  .transformation-showcase {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+  }
+  .comparison-card {
+    height: 280px;
+  }
+  .team-staggered-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .team-staggered-card:nth-child(even) {
+    transform: none;
+  }
+  .team-staggered-card:nth-child(even):hover {
+    transform: translateY(-5px);
+  }
+}
+
+@media (max-width: 576px) {
+  .team-staggered-grid {
+    grid-template-columns: 1fr;
+  }
+  .comparison-split-wrapper {
+    grid-template-columns: 1fr;
+  }
+  .footer-minimal-links {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .footer-minimal-bottom {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+}
+
+
 
 

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-export default function Hero() {
+export default function Hero({ data, layout }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -11,20 +11,31 @@ export default function Hero() {
       const tl = gsap.timeline();
 
       // Ensure elements start in their hidden state for a clean reveal
-      gsap.set(".text-mask-child", { y: "100%" });
-      gsap.set([".subtitle", ".hero-desc", ".hero-cta-group", ".hero-stats-strip"], { opacity: 0, y: 20 });
+      if (layout !== 'fullBleed') {
+        gsap.set(".text-mask-child", { y: "100%" });
+      }
+      gsap.set([".subtitle", ".hero-desc", ".hero-cta-group", ".hero-stats-strip", ".hero-fullbleed-content p", ".hero-fullbleed-content h1"], { opacity: 0, y: 20 });
 
-      // Title line reveals (upwards mask reveal)
-      tl.to(".text-mask-child", {
-        y: "0%",
-        duration: 1.4,
-        ease: "power4.out",
-        stagger: 0.12,
-        delay: 0.2
-      });
+      // Title line reveals (upwards mask reveal or fade for full-bleed)
+      if (layout === 'fullBleed') {
+        tl.to(".hero-fullbleed-content h1", {
+          opacity: 1,
+          y: 0,
+          duration: 1.4,
+          ease: "power4.out"
+        });
+      } else {
+        tl.to(".text-mask-child", {
+          y: "0%",
+          duration: 1.4,
+          ease: "power4.out",
+          stagger: 0.12,
+          delay: 0.2
+        });
+      }
 
       // Staggered reveal of narrative text & buttons
-      tl.to([".subtitle", ".hero-desc", ".hero-cta-group", ".hero-stats-strip"], {
+      tl.to([".subtitle", ".hero-desc", ".hero-cta-group", ".hero-stats-strip", ".hero-fullbleed-content p"], {
         opacity: 1,
         y: 0,
         duration: 1.2,
@@ -33,56 +44,151 @@ export default function Hero() {
       }, "-=0.8");
 
       // 2. Parallax and camera slow zoom out on scroll
-      gsap.fromTo(".hero-img", 
-        { scale: 1.15, y: 0 },
-        { 
-          scale: 1.0, 
-          y: () => window.innerWidth >= 992 ? 160 : 0, 
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: true
+      if (layout === 'fullBleed') {
+        gsap.fromTo(".hero-fullbleed-bg img",
+          { scale: 1.15 },
+          {
+            scale: 1.0,
+            ease: "none",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top top",
+              end: "bottom top",
+              scrub: true
+            }
           }
-        }
-      );
+        );
+      } else {
+        gsap.fromTo(".hero-img", 
+          { scale: 1.15, y: 0 },
+          { 
+            scale: 1.0, 
+            y: () => (window.innerWidth >= 992 && layout === 'split') ? 160 : 0, 
+            ease: "none",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top top",
+              end: "bottom top",
+              scrub: true
+            }
+          }
+        );
+      }
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [layout, data]); // Trigger clean timeline when layout or data changes
 
-  const stats = [
-    { value: '200+', label: 'Projects Completed' },
-    { value: '15+', label: 'Years Experience' },
-    { value: '5', label: 'Cities Served' },
-    { value: '10-Yr', label: 'Warranty Included' },
-  ];
+  // Render Layout: Full Bleed
+  if (layout === 'fullBleed') {
+    return (
+      <section ref={containerRef} id="home" className="hero-fullbleed">
+        <div className="hero-fullbleed-bg">
+          <img src={data.img} alt={data.title1} />
+        </div>
+        <div className="hero-fullbleed-overlay"></div>
+        <div className="hero-fullbleed-content">
+          <span className="subtitle">{data.subtitle}</span>
+          <h1 className="hero-title">{data.title1} {data.title2} {data.title3}</h1>
+          <p>{data.desc}</p>
+          <div className="hero-cta-group" style={{ justifyContent: 'center' }}>
+            <a href="#contact" className="btn btn-primary">Book Consultation</a>
+            <a href="#portfolio" className="btn btn-secondary">View Portfolio</a>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
+  // Render Layout: Asymmetric
+  if (layout === 'asymmetric') {
+    return (
+      <section ref={containerRef} id="home" className="hero-asymmetric">
+        <div className="container">
+          <div className="asymmetric-grid">
+            <div className="asymmetric-images-wrapper">
+              <img src={data.img} alt="Main Perspective" className="asym-img-main hero-img" />
+              <img src={data.img2 || data.img} alt="Architectural Detail" className="asym-img-floating" />
+            </div>
+            <div className="asymmetric-content">
+              <span className="subtitle">{data.subtitle}</span>
+              <h1 className="hero-title" style={{ marginBottom: '1.5rem', textTransform: 'uppercase' }}>
+                <span className="text-mask" style={{ display: 'block' }}>
+                  <span className="text-mask-child">{data.title1}</span>
+                </span>
+                <span className="text-mask" style={{ display: 'block', color: 'var(--color-accent)' }}>
+                  <span className="text-mask-child">{data.title2}</span>
+                </span>
+                <span className="text-mask" style={{ display: 'block' }}>
+                  <span className="text-mask-child">{data.title3}</span>
+                </span>
+              </h1>
+              <p className="hero-desc">{data.desc}</p>
+              <div className="hero-cta-group" style={{ marginTop: '2rem' }}>
+                <a href="#contact" className="btn btn-primary">Book Consultation</a>
+                <a href="#portfolio" className="btn btn-secondary">View Portfolio</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Render Layout: Stacked Grid
+  if (layout === 'stacked') {
+    return (
+      <section ref={containerRef} id="home" className="hero-stacked">
+        <div className="container">
+          <div className="hero-stacked-header">
+            <span className="subtitle">{data.subtitle}</span>
+            <h1 className="hero-title">
+              <span className="text-mask" style={{ display: 'block' }}>
+                <span className="text-mask-child">{data.title1} {data.title2}</span>
+              </span>
+              <span className="text-mask" style={{ display: 'block' }}>
+                <span className="text-mask-child">{data.title3}</span>
+              </span>
+            </h1>
+            <p className="hero-desc">{data.desc}</p>
+            <div className="hero-cta-group">
+              <a href="#contact" className="btn btn-primary">Book Consultation</a>
+              <a href="#portfolio" className="btn btn-secondary">View Portfolio</a>
+            </div>
+          </div>
+          <div className="stacked-images-showcase">
+            <img src={data.img} alt="Showcase Main" className="stacked-showcase-img hero-img" />
+            <img src={data.img2 || data.img} alt="Showcase Secondary" className="stacked-showcase-img" />
+            <img src={data.img3 || data.img} alt="Showcase Tertiary" className="stacked-showcase-img" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Default Layout: Split Screen
   return (
     <section ref={containerRef} id="home" className="hero-section">
       <div className="hero-grid">
         {/* Left Column - Content */}
         <div className="hero-content-col">
           <div className="hero-content-inner">
-            <span className="subtitle">THE DESIGN ATELIER</span>
+            <span className="subtitle">{data.subtitle}</span>
             
             {/* Elegant sequential text mask reveal */}
             <h1 className="hero-title">
               <span className="text-mask">
-                <span className="text-mask-child">Designing Spaces</span>
+                <span className="text-mask-child">{data.title1}</span>
               </span>
               <span className="text-mask">
-                <span className="text-mask-child">That Reflect</span>
+                <span className="text-mask-child">{data.title2}</span>
               </span>
               <span className="text-mask">
-                <span className="text-mask-child">Your Lifestyle</span>
+                <span className="text-mask-child">{data.title3}</span>
               </span>
             </h1>
 
-            <p className="hero-desc">
-              Luxury residential interiors crafted with timeless elegance and meticulous attention to detail.
-            </p>
+            <p className="hero-desc">{data.desc}</p>
 
             <div className="hero-cta-group">
               <a href="#contact" className="btn btn-primary">
@@ -95,7 +201,7 @@ export default function Hero() {
             
             {/* Desktop Statistics Strip */}
             <div className="hero-stats-strip">
-              {stats.map((stat, i) => (
+              {data.stats.map((stat, i) => (
                 <div key={i} className="stat-item">
                   <span className="stat-value">{stat.value}</span>
                   <span className="stat-label">{stat.label}</span>
@@ -109,8 +215,8 @@ export default function Hero() {
         <div className="hero-image-col">
           <div className="hero-image-wrapper">
             <img 
-              src="/images/living room/WhatsApp Image 2026-06-17 at 14.28.32.jpeg" 
-              alt="Luxury Minimal Living Room Design by The Design Atelier" 
+              src={data.img} 
+              alt="Premium architectural space" 
               className="hero-img"
             />
             {/* Dark vignette overlay */}

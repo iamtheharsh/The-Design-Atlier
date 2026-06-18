@@ -3,75 +3,153 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function Testimonials() {
+export default function Testimonials({ data, layout }) {
   const containerRef = useRef(null);
 
-  const reviews = [
+  const defaultReviews = [
     {
       quote: "The Design Atelier turned our shell apartment into a refined, breathable Juhu sanctuary. Their attention to wood and stone textures, balanced by beautiful natural lighting, has made everyday living a peaceful experience.",
-      name: "Aarav & Meera Shah",
-      location: "Juhu, Mumbai",
-      designation: "Upper Penthouse Owners"
+      author: "Aarav & Meera Shah",
+      project: "Upper Penthouse Owners • Juhu, Mumbai"
     },
     {
       quote: "Their modular kitchen layouts are highly efficient, combining professional ergonomics with beautiful neutral finishes. They managed structural civil changes and custom cabinetry setup with absolute precision.",
-      name: "Dr. Ritu Vaswani",
-      location: "Bandra West, Mumbai",
-      designation: "Duplex Apartment"
+      author: "Dr. Ritu Vaswani",
+      project: "Duplex Apartment • Bandra West, Mumbai"
     },
     {
       quote: "Their 10-year warranty gave us structural confidence, but it was their meticulous carpentry team and material selection that blew us away. The Alibaug villa is our family's ultimate retreat.",
-      name: "Vikram Malhotra",
-      location: "Alibaug, Maharashtra",
-      designation: "Luxury Weekend Villa"
+      author: "Vikram Malhotra",
+      project: "Luxury Weekend Villa • Alibaug, Maharashtra"
     }
   ];
 
+  const subtitle = data?.subtitle || "CLIENT REVIEWS";
+  const title = data?.title || "Living in Their Vision";
+  const list = data?.list || defaultReviews;
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Reset index when data or layout changes to avoid out-of-bounds index issues
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [data, layout]);
+
   const nextTestimonial = () => {
-    setCurrentIndex((prev) => (prev === reviews.length - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) => (prev === list.length - 1 ? 0 : prev + 1));
   };
 
   const prevTestimonial = () => {
-    setCurrentIndex((prev) => (prev === 0 ? reviews.length - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev === 0 ? list.length - 1 : prev - 1));
   };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Left side titles reveal
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".testimonials-left",
-          start: "top 80%",
-          toggleActions: "play none none none"
-        }
-      });
+      if (layout === 'depthStacked') {
+        // Title reveal
+        gsap.fromTo([".depth-title-wrapper .subtitle", ".depth-title-wrapper h2"],
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.2,
+            ease: "power3.out",
+            stagger: 0.15,
+            scrollTrigger: {
+              trigger: ".depth-title-wrapper",
+              start: "top 85%",
+              toggleActions: "play none none none"
+            }
+          }
+        );
 
-      tl.fromTo([".testimonials-left .subtitle", ".testimonials-left h2", ".quote-mark-large", ".carousel-controls"],
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", stagger: 0.15 }
-      );
-
-      // Right side wrapper reveal
-      gsap.fromTo(".testimonials-right",
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.4,
-          ease: "power3.out",
+        // Stacked container reveal
+        gsap.fromTo(".depth-stacked-container, .depth-stacked-nav-buttons",
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.4,
+            ease: "power3.out",
+            stagger: 0.15,
+            scrollTrigger: {
+              trigger: ".depth-stacked-container",
+              start: "top 75%",
+              toggleActions: "play none none none"
+            }
+          }
+        );
+      } else {
+        // Left side titles reveal
+        const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: ".testimonials-right",
-            start: "top 75%",
+            trigger: ".testimonials-left",
+            start: "top 80%",
             toggleActions: "play none none none"
           }
-        }
-      );
+        });
+
+        tl.fromTo([".testimonials-left .subtitle", ".testimonials-left h2", ".quote-mark-large", ".carousel-controls"],
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", stagger: 0.15 }
+        );
+
+        // Right side wrapper reveal
+        gsap.fromTo(".testimonials-right",
+          { opacity: 0, y: 50 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 1.4,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".testimonials-right",
+              start: "top 75%",
+              toggleActions: "play none none none"
+            }
+          }
+        );
+      }
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [layout, data]);
+
+  const getCardStyle = (index) => {
+    const listLength = list.length;
+    let diff = index - currentIndex;
+    if (diff < 0) diff += listLength;
+
+    if (diff === 0) {
+      return {
+        transform: 'translateY(0px) scale(1)',
+        zIndex: 10,
+        opacity: 1,
+        pointerEvents: 'auto',
+      };
+    } else if (diff === 1) {
+      return {
+        transform: 'translateY(20px) scale(0.95)',
+        zIndex: 9,
+        opacity: 0.8,
+        pointerEvents: 'none',
+      };
+    } else if (diff === 2) {
+      return {
+        transform: 'translateY(40px) scale(0.90)',
+        zIndex: 8,
+        opacity: 0.6,
+        pointerEvents: 'none',
+      };
+    } else {
+      return {
+        transform: 'translateY(60px) scale(0.85)',
+        zIndex: 7,
+        opacity: 0,
+        pointerEvents: 'none',
+      };
+    }
+  };
 
   return (
     <section 
@@ -80,54 +158,105 @@ export default function Testimonials() {
       className="testimonials-section section"
     >
       <div className="container">
-        <div className="testimonials-grid">
-          {/* Left Column: Title & Quote Icon */}
-          <div className="testimonials-left">
-            <span className="subtitle">CLIENT REVIEWS</span>
-            <h2>Living in Their Vision</h2>
-            
-            {/* Elegant large quote icon */}
-            <div className="quote-mark-large">“</div>
-            
-            {/* Carousel Buttons */}
-            <div className="carousel-controls">
-              <button onClick={prevTestimonial} className="carousel-btn" aria-label="Previous Testimonial">
+        {layout === 'depthStacked' ? (
+          /* Layout: Depth Stacked Card Deck */
+          <div className="depth-stacked-wrapper">
+            <div className="depth-title-wrapper" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+              <span className="subtitle">{subtitle}</span>
+              <h2 style={{ marginTop: '0.5rem' }}>{title}</h2>
+            </div>
+
+            <div className="depth-stacked-container">
+              {list.map((item, index) => {
+                const cardStyle = getCardStyle(index);
+                return (
+                  <div
+                    key={index}
+                    className="depth-stacked-card"
+                    style={cardStyle}
+                  >
+                    <div className="quote-mark-large" style={{ fontSize: '6rem', marginTop: '0', height: '40px', display: 'flex', alignItems: 'center' }}>“</div>
+                    <p className="depth-stacked-quote">
+                      "{item.quote}"
+                    </p>
+                    <div className="depth-stacked-author-row">
+                      <span className="depth-stacked-author">
+                        {item.author || item.name}
+                      </span>
+                      <span className="depth-stacked-project">
+                        {item.project || `${item.designation || ''}${item.location ? ' • ' + item.location : ''}`}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="depth-stacked-nav-buttons">
+              <button onClick={prevTestimonial} className="depth-nav-btn" aria-label="Previous Testimonial">
                 &larr;
               </button>
-              <span className="carousel-indicator">
-                {currentIndex + 1} / {reviews.length}
+              <span className="carousel-indicator" style={{ display: 'flex', alignItems: 'center', margin: '0 0.5rem' }}>
+                {currentIndex + 1} / {list.length}
               </span>
-              <button onClick={nextTestimonial} className="carousel-btn" aria-label="Next Testimonial">
+              <button onClick={nextTestimonial} className="depth-nav-btn" aria-label="Next Testimonial">
                 &rarr;
               </button>
             </div>
           </div>
+        ) : (
+          /* Layout: Classic Fade Slider */
+          <div className="testimonials-grid">
+            {/* Left Column: Title & Quote Icon */}
+            <div className="testimonials-left">
+              <span className="subtitle">{subtitle}</span>
+              <h2>{title}</h2>
+              
+              {/* Elegant large quote icon */}
+              <div className="quote-mark-large">“</div>
+              
+              {/* Carousel Buttons */}
+              <div className="carousel-controls">
+                <button onClick={prevTestimonial} className="carousel-btn" aria-label="Previous Testimonial">
+                  &larr;
+                </button>
+                <span className="carousel-indicator">
+                  {currentIndex + 1} / {list.length}
+                </span>
+                <button onClick={nextTestimonial} className="carousel-btn" aria-label="Next Testimonial">
+                  &rarr;
+                </button>
+              </div>
+            </div>
 
-          {/* Right Column: Sliding Active Review via Framer Motion */}
-          <div className="testimonials-right">
-            <AnimatePresence mode="wait">
-              <motion.div 
-                key={currentIndex} 
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
-                className="quote-display-card"
-              >
-                <p className="quote-text">
-                  "{reviews[currentIndex].quote}"
-                </p>
-                
-                <div className="quote-author-info">
-                  <span className="author-name">{reviews[currentIndex].name}</span>
-                  <span className="author-details">
-                    {reviews[currentIndex].designation} &bull; {reviews[currentIndex].location}
-                  </span>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+            {/* Right Column: Sliding Active Review via Framer Motion */}
+            <div className="testimonials-right">
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={currentIndex} 
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.7, ease: [0.25, 1, 0.5, 1] }}
+                  className="quote-display-card"
+                >
+                  <p className="quote-text">
+                    "{list[currentIndex].quote}"
+                  </p>
+                  
+                  <div className="quote-author-info">
+                    <span className="author-name">
+                      {list[currentIndex].author || list[currentIndex].name}
+                    </span>
+                    <span className="author-details">
+                      {list[currentIndex].project || `${list[currentIndex].designation || ''}${list[currentIndex].location ? ' • ' + list[currentIndex].location : ''}`}
+                    </span>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <style>{`
