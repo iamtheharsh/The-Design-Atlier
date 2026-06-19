@@ -7,6 +7,31 @@ export default function Hero({ data, portfolio, layout }) {
   const containerRef = useRef(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const hoverTimeoutRef = useRef(null);
+  const lastMouseMoveTimeRef = useRef(Date.now());
+  const videoRef = useRef(null);
+
+  // Handle cinematic video playback segments crossfade on slide hover
+  useEffect(() => {
+    if (videoRef.current) {
+      gsap.fromTo(videoRef.current,
+        { opacity: 0.35, scale: 1.04 },
+        { opacity: 1, scale: 1, duration: 0.7, ease: "power2.out" }
+      );
+      // Segment start times: Slide 0: 0s, Slide 1: 12s, Slide 2: 24s
+      const startTime = activeSlide * 12;
+      videoRef.current.currentTime = startTime;
+      videoRef.current.play().catch(() => {});
+    }
+  }, [activeSlide]);
+
+  // Track global mouse moves to distinguish between user hover and element shifting under a static cursor
+  useEffect(() => {
+    const handleGlobalMouseMove = () => {
+      lastMouseMoveTimeRef.current = Date.now();
+    };
+    window.addEventListener('mousemove', handleGlobalMouseMove);
+    return () => window.removeEventListener('mousemove', handleGlobalMouseMove);
+  }, []);
 
   // Reset active slide when layout or data changes
   useEffect(() => {
@@ -111,6 +136,42 @@ export default function Hero({ data, portfolio, layout }) {
           stagger: 0.18,
           delay: 0.6
         });
+
+        // 6. Scroll-to-Next Premium Animations (Headline breaks, orbit fades, video zooms)
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true
+          }
+        })
+        .to(".luxury-title .luxury-text-mask-child", {
+          y: (i) => i === 0 ? "-100%" : i === 1 ? "100%" : "-80%",
+          opacity: 0,
+          stagger: 0.05,
+          ease: "none"
+        }, 0)
+        .to(".luxury-orbit-scroll-wrapper", {
+          opacity: 0,
+          scale: 0.9,
+          ease: "none"
+        }, 0)
+        .to(".luxury-bg-zoom-container", {
+          scale: 1.12,
+          ease: "none"
+        }, 0)
+        .to(".luxury-curve-svg", {
+          opacity: 0,
+          y: -50,
+          ease: "none"
+        }, 0)
+        .to([".luxury-desc", ".hero-cta-group", ".luxury-active-strip", ".luxury-content .subtitle"], {
+          opacity: 0,
+          y: -30,
+          stagger: 0.02,
+          ease: "none"
+        }, 0);
       } else {
         // Entrance reveal for non-luxury layouts
         if (layout !== 'fullBleed') {
@@ -259,10 +320,15 @@ export default function Hero({ data, portfolio, layout }) {
   };
 
   const handleCircleMouseEnter = (index) => {
+    // If the mouse hasn't moved in the last 100ms, it means the elements transitioned under a static pointer.
+    // We ignore this event to prevent glitchy swap-back feedback loops.
+    const timeSinceLastMove = Date.now() - lastMouseMoveTimeRef.current;
+    if (timeSinceLastMove > 100) return;
+
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     hoverTimeoutRef.current = setTimeout(() => {
       setActiveSlide(index);
-    }, 180); // 180ms threshold to prevent glitching on quick mouse sweeps
+    }, 120); // Faster trigger, protected by mousemove guard
   };
 
   const handleCircleMouseLeave = () => {
@@ -279,46 +345,57 @@ export default function Hero({ data, portfolio, layout }) {
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        {/* Background wrapper with smooth fade transitions */}
+        {/* Cinematic glow and grain overlays */}
+        <div className="ambient-glow"></div>
+        <div className="grain-overlay"></div>
+
+        {/* Background wrapper with premium architectural video */}
         <div className="luxury-bg-wrapper">
-          <motion.img
-            key={activeSlide}
-            src={featuredSlides[activeSlide].img}
-            alt={featuredSlides[activeSlide].title}
-            initial={{ opacity: 0.15, scale: 1.02 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.75, ease: "easeOut" }}
-            className="luxury-bg-image"
-          />
+          <div className="luxury-bg-zoom-container" style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+            <video
+              ref={videoRef}
+              src="/videos/12684285_1920_1080_60fps.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="luxury-bg-image"
+              style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+            />
+          </div>
           <div className="luxury-bg-overlay"></div>
         </div>
 
-        {/* Technical Architectural Drawing & Compass Lines */}
+        {/* Blueprint-inspired Architectural Linework */}
         <svg className="luxury-curve-svg" viewBox="0 0 1440 800" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Blueprint Grid Axes */}
-          <line x1="80%" y1="0" x2="80%" y2="100%" stroke="var(--color-border)" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.25" />
-          <line x1="0" y1="50%" x2="100%" y2="50%" stroke="var(--color-border)" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.25" />
+          {/* Grid layout lines */}
+          <line x1="80%" y1="0" x2="80%" y2="100%" stroke="var(--color-border)" strokeWidth="0.5" opacity="0.2" />
+          <line x1="0" y1="50%" x2="100%" y2="50%" stroke="var(--color-border)" strokeWidth="0.5" opacity="0.2" />
+          <line x1="45%" y1="0" x2="45%" y2="100%" stroke="var(--color-border)" strokeWidth="0.5" strokeDasharray="3 3" opacity="0.15" />
           
-          {/* Architectural Draft Compass circles centered near the slots */}
-          <circle className="arch-compass-circle-1" cx="80%" cy="50%" r="280" stroke="var(--color-accent)" strokeWidth="0.8" strokeDasharray="3 6" opacity="0.28" />
-          <circle className="arch-compass-circle-2" cx="80%" cy="50%" r="380" stroke="var(--color-border)" strokeWidth="0.6" strokeDasharray="10 4" opacity="0.18" />
-          <circle className="arch-compass-circle-3" cx="80%" cy="50%" r="120" stroke="var(--color-accent)" strokeWidth="0.5" opacity="0.15" />
+          {/* Outer sheet border framing */}
+          <rect x="40" y="40" width="1360" height="720" stroke="var(--color-border)" strokeWidth="0.5" opacity="0.2" />
           
-          {/* Main technical connector curve line connecting circles */}
-          <path 
-            className="luxury-curve-path" 
-            d="M 680,240 Q 1000,100 1200,320 T 1300,560" 
-            stroke="var(--color-accent)" 
-            strokeWidth="0.8" 
-            strokeOpacity="0.45" 
-          />
-          
-          {/* Crosshairs & Ticks */}
-          <g opacity="0.3" stroke="var(--color-text-body)" strokeWidth="0.7">
-            <line x1="680" y1="230" x2="680" y2="250" />
-            <line x1="1200" y1="310" x2="1200" y2="330" />
-            <line x1="1300" y1="550" x2="1300" y2="570" />
-          </g>
+          {/* Architectural corner crop marks */}
+          <path d="M 30,40 L 50,40 M 40,30 L 40,50" stroke="var(--color-accent)" strokeWidth="0.8" opacity="0.4" />
+          <path d="M 1390,40 L 1410,40 M 1400,30 L 1400,50" stroke="var(--color-accent)" strokeWidth="0.8" opacity="0.4" />
+          <path d="M 30,760 L 50,760 M 40,750 L 40,770" stroke="var(--color-accent)" strokeWidth="0.8" opacity="0.4" />
+          <path d="M 1390,760 L 1410,760 M 1400,750 L 1400,770" stroke="var(--color-accent)" strokeWidth="0.8" opacity="0.4" />
+
+          {/* Fine Concentric Blueprint drafting circles around the preview slots (centered at 80% 50%) */}
+          <circle className="arch-compass-circle-1" cx="80%" cy="50%" r="220" stroke="var(--color-border)" strokeWidth="0.6" strokeDasharray="3 6" opacity="0.2" />
+          <circle className="arch-compass-circle-2" cx="80%" cy="50%" r="320" stroke="var(--color-border)" strokeWidth="0.5" opacity="0.15" />
+          <circle className="arch-compass-circle-3" cx="80%" cy="50%" r="420" stroke="var(--color-accent)" strokeWidth="0.5" strokeDasharray="15 3" opacity="0.1" />
+
+          {/* Technical radial angle lines radiating from slot-0 center */}
+          <line x1="80%" y1="50%" x2="68%" y2="38%" stroke="var(--color-border)" strokeWidth="0.5" opacity="0.18" />
+          <line x1="80%" y1="50%" x2="72%" y2="68%" stroke="var(--color-border)" strokeWidth="0.5" opacity="0.18" />
+
+          {/* Architectural Text Specifications */}
+          <text x="60" y="70" fill="var(--color-accent)" fontFamily="var(--font-body)" fontSize="8" letterSpacing="3" opacity="0.5">SCALE 1:50</text>
+          <text x="60" y="85" fill="var(--color-text-body)" fontFamily="var(--font-body)" fontSize="8" letterSpacing="1" opacity="0.4">DWG REF: AT-2026-H1</text>
+          <text x="1250" y="70" fill="var(--color-text-body)" fontFamily="var(--font-body)" fontSize="8" letterSpacing="2" opacity="0.4" textAnchor="end">COORDS: 18.9750° N, 72.8258° E</text>
+          <text x="1250" y="85" fill="var(--color-accent)" fontFamily="var(--font-body)" fontSize="8" letterSpacing="1" opacity="0.5" textAnchor="end">MUMBAI SPECIFICATION</text>
         </svg>
 
         {/* Editorial copy blocks */}
@@ -342,53 +419,97 @@ export default function Hero({ data, portfolio, layout }) {
               <a href="#portfolio" className="btn btn-secondary">View Portfolio</a>
             </div>
 
-            {/* Active project display strip */}
+            {/* Active project display strip - Magazine style storytelling columns */}
             <div className="luxury-active-strip">
-              <span className="strip-label">Featured Work</span>
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={activeSlide}
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  transition={{ duration: 0.35 }}
-                  className="strip-val"
-                >
-                  {featuredSlides[activeSlide]?.title} &bull; {featuredSlides[activeSlide]?.location || featuredSlides[activeSlide]?.style}
-                </motion.span>
-              </AnimatePresence>
+              <div className="strip-meta-col">
+                <span className="strip-label">Project Specification</span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={activeSlide}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.35 }}
+                    className="strip-val"
+                  >
+                    {featuredSlides[activeSlide]?.title}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+
+              <div className="strip-meta-col">
+                <span className="strip-label">Location Details</span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={activeSlide}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.35 }}
+                    className="strip-val"
+                  >
+                    {featuredSlides[activeSlide]?.location || 'Mumbai, Maharashtra'}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+
+              <div className="strip-meta-col">
+                <span className="strip-label">Design Philosophy</span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={activeSlide}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    transition={{ duration: 0.35 }}
+                    className="strip-val"
+                  >
+                    {featuredSlides[activeSlide]?.style || 'Quiet Luxury'}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Floating circular elements container */}
-        <div className="circle-previews-container">
-          {featuredSlides.map((slide, index) => {
-            const slotClass = getSlotClass(index); // circle-slot-0, circle-slot-1, or circle-slot-2
-            return (
-              <div
-                key={index}
-                onMouseEnter={() => handleCircleMouseEnter(index)}
-                onMouseLeave={handleCircleMouseLeave}
-                onClick={() => setActiveSlide(index)}
-                className={`floating-circle-preview ${slotClass}`}
-              >
-                <div className={`circle-parallax-${index}`} style={{ width: '100%', height: '100%' }}>
-                  <div className="circle-inner">
-                    <img src={slide.img} alt={slide.title} />
-                    <div className="circle-overlay">
-                      <span className="circle-proj-num">0{index + 1}</span>
+        {/* Scroll wrapper for GSAP animations */}
+        <div className="luxury-orbit-scroll-wrapper">
+          {/* Floating circular elements container */}
+          <div className="circle-previews-container">
+            {featuredSlides.map((slide, index) => {
+              const slotClass = getSlotClass(index); // circle-slot-0, circle-slot-1, or circle-slot-2
+              return (
+                <div
+                  key={index}
+                  onMouseEnter={() => handleCircleMouseEnter(index)}
+                  onMouseLeave={handleCircleMouseLeave}
+                  onClick={() => setActiveSlide(index)}
+                  className={`floating-circle-preview ${slotClass}`}
+                >
+                  <div className={`circle-parallax-${index}`} style={{ width: '100%', height: '100%' }}>
+                    <div className="circle-inner">
+                      <img src={slide.img} alt={slide.title} />
+                      <div className="circle-overlay">
+                        <span className="circle-proj-num">0{index + 1}</span>
+                      </div>
+                    </div>
+                    {/* Custom tooltip details */}
+                    <div className="circle-tooltip">
+                      <span className="tooltip-title">{slide.title}</span>
+                      <span className="tooltip-desc">{slide.location || slide.style}</span>
                     </div>
                   </div>
-                  {/* Custom tooltip details */}
-                  <div className="circle-tooltip">
-                    <span className="tooltip-title">{slide.title}</span>
-                    <span className="tooltip-desc">{slide.location || slide.style}</span>
-                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Luxury side vertical label and scroll indicator */}
+        <div className="luxury-side-label">MUMBAI &bull; EDITION 2026</div>
+        <div className="luxury-scroll-indicator">
+          <span className="scroll-text">Scroll to explore</span>
+          <span className="scroll-line"></span>
         </div>
       </section>
     );
@@ -399,7 +520,14 @@ export default function Hero({ data, portfolio, layout }) {
     return (
       <section ref={containerRef} id="home" className="hero-fullbleed">
         <div className="hero-fullbleed-bg">
-          <img src={data.img} alt={data.title1} />
+          <video
+            src="/videos/12684285_1920_1080_60fps.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+          />
         </div>
         <div className="hero-fullbleed-overlay"></div>
         <div className="hero-fullbleed-content">
@@ -422,7 +550,15 @@ export default function Hero({ data, portfolio, layout }) {
         <div className="container">
           <div className="asymmetric-grid">
             <div className="asymmetric-images-wrapper">
-              <img src={data.img} alt="Main Perspective" className="asym-img-main hero-img" />
+              <video 
+                src="/videos/12684285_1920_1080_60fps.mp4" 
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="asym-img-main hero-img"
+                style={{ objectFit: 'cover' }}
+              />
               <img src={data.img2 || data.img} alt="Architectural Detail" className="asym-img-floating" />
             </div>
             <div className="asymmetric-content">
@@ -472,7 +608,15 @@ export default function Hero({ data, portfolio, layout }) {
             </div>
           </div>
           <div className="stacked-images-showcase">
-            <img src={data.img} alt="Showcase Main" className="stacked-showcase-img hero-img" />
+            <video 
+              src="/videos/12684285_1920_1080_60fps.mp4" 
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="stacked-showcase-img hero-img"
+              style={{ objectFit: 'cover' }}
+            />
             <img src={data.img2 || data.img} alt="Showcase Secondary" className="stacked-showcase-img" />
             <img src={data.img3 || data.img} alt="Showcase Tertiary" className="stacked-showcase-img" />
           </div>
@@ -517,13 +661,17 @@ export default function Hero({ data, portfolio, layout }) {
           </div>
         </div>
 
-        {/* Right Column - Image wrapper */}
+        {/* Right Column - Video wrapper */}
         <div className="hero-image-col">
           <div className="hero-image-wrapper">
-            <img 
-              src={data.img} 
-              alt="Premium architectural space" 
+            <video 
+              src="/videos/12684285_1920_1080_60fps.mp4" 
+              autoPlay
+              loop
+              muted
+              playsInline
               className="hero-img"
+              style={{ objectFit: 'cover', width: '100%', height: '100%' }}
             />
             <div className="hero-img-overlay"></div>
           </div>
@@ -538,7 +686,7 @@ export default function Hero({ data, portfolio, layout }) {
           display: flex;
           align-items: stretch;
           border-bottom: 1px solid var(--color-border);
-          padding-top: 90px;
+          padding-top: 70px;
           overflow: hidden;
         }
 
@@ -656,7 +804,7 @@ export default function Hero({ data, portfolio, layout }) {
 
         @media (max-width: 991px) {
           .hero-section {
-            padding-top: 75px;
+            padding-top: 60px;
             height: auto;
             min-height: auto;
           }

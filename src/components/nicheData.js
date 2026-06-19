@@ -90,12 +90,29 @@ export const nicheData = {
         { title: 'Monochromatic Serif Lounge', category: 'Living Spaces', img: '/images/living room/WhatsApp Image 2026-06-17 at 14.28.33 (2).jpeg', location: 'Lower Parel, Mumbai', style: 'Monochromatic', area: '2,150 sq. ft.' },
         { title: 'The Architectural Salon', category: 'Living Spaces', img: '/images/living room/WhatsApp Image 2026-06-17 at 14.28.34.jpeg', location: 'Prabhadevi, Mumbai', style: 'Sleek Contemporary', area: '3,000 sq. ft.' },
         { title: 'The Glasshouse Pavilion', category: 'Living Spaces', img: '/images/living room/WhatsApp Image 2026-06-17 at 14.28.34 (1).jpeg', location: 'Alibaug, Maharashtra', style: 'Quiet Luxury', area: '3,800 sq. ft.' },
+        
         { title: 'The Juhu Master Sanctuary', category: 'Bedrooms', img: '/images/bedroom/WhatsApp Image 2026-06-17 at 14.24.41.jpeg', location: 'Juhu, Mumbai', style: 'Warm Minimalist', area: '1,600 sq. ft.' },
         { title: 'Earthy Linen Suite', category: 'Bedrooms', img: '/images/bedroom/WhatsApp Image 2026-06-17 at 14.24.41 (1).jpeg', location: 'Bandra, Mumbai', style: 'Earthy Editorial', area: '1,400 sq. ft.' },
         { title: 'The Textured Chamber', category: 'Bedrooms', img: '/images/bedroom/WhatsApp Image 2026-06-17 at 14.24.41 (2).jpeg', location: 'Colaba, Mumbai', style: 'Bespoke Luxury', area: '1,850 sq. ft.' },
         { title: 'Sanctuary of Light', category: 'Bedrooms', img: '/images/bedroom/WhatsApp Image 2026-06-17 at 14.24.42.jpeg', location: 'Altamount Road, Mumbai', style: 'Quiet Luxury', area: '2,100 sq. ft.' },
+        
         { title: 'The Brass Kitchen Suite', category: 'Kitchens', img: '/images/Kitchen/WhatsApp Image 2026-06-17 at 14.26.27.jpeg', location: 'Worli, Mumbai', style: 'Industrial Chic', area: '450 sq. ft.' },
-        { title: 'Bespoke Villa Façade', category: 'Luxury Villas', img: '/images/luxury vills/WhatsApp Image 2026-06-17 at 14.47.26.jpeg', location: 'Alibaug, Maharashtra', style: 'Modern Brutalist', area: '6,200 sq. ft.' }
+        { title: 'Minimalist Marble Galley', category: 'Kitchens', img: '/images/Kitchen/WhatsApp Image 2026-06-17 at 14.26.28.jpeg', location: 'Juhu, Mumbai', style: 'Warm Minimalist', area: '380 sq. ft.' },
+        { title: 'Oak & Terrazzo Scullery', category: 'Kitchens', img: '/images/Kitchen/WhatsApp Image 2026-06-17 at 14.26.28 (1).jpeg', location: 'Bandra, Mumbai', style: 'Earthy Modern', area: '420 sq. ft.' },
+        { title: 'Sophisticated Matte Island', category: 'Kitchens', img: '/images/Kitchen/WhatsApp Image 2026-06-17 at 14.26.28 (2).jpeg', location: 'Cuffe Parade, Mumbai', style: 'Monochromatic Luxury', area: '510 sq. ft.' },
+        { title: 'Contemporary Open Hearth', category: 'Kitchens', img: '/images/Kitchen/WhatsApp Image 2026-06-17 at 14.26.29.jpeg', location: 'Colaba, Mumbai', style: 'Sleek Contemporary', area: '490 sq. ft.' },
+        
+        { title: 'Travertine Spa Sanctuary', category: 'Bathrooms', img: '/images/bathroomo/WhatsApp Image 2026-06-17 at 14.47.28.jpeg', location: 'Worli, Mumbai', style: 'Quiet Luxury', area: '280 sq. ft.' },
+        { title: 'Fluted Marble Powder Room', category: 'Bathrooms', img: '/images/bathroomo/WhatsApp Image 2026-06-17 at 14.47.28 (1).jpeg', location: 'Bandra West, Mumbai', style: 'Warm Minimalist', area: '120 sq. ft.' },
+        { title: 'Polished Concrete Bath', category: 'Bathrooms', img: '/images/bathroomo/WhatsApp Image 2026-06-17 at 14.47.28 (2).jpeg', location: 'Lower Parel, Mumbai', style: 'Sleek Brutalist', area: '240 sq. ft.' },
+        { title: 'Earthy Stone Washroom', category: 'Bathrooms', img: '/images/bathroomo/WhatsApp Image 2026-06-17 at 14.47.29.jpeg', location: 'Juhu, Mumbai', style: 'Earthy Modern', area: '310 sq. ft.' },
+        { title: 'Monochrome Wellness Suite', category: 'Bathrooms', img: '/images/bathroomo/WhatsApp Image 2026-06-17 at 14.47.29 (1).jpeg', location: 'Altamount Road, Mumbai', style: 'Monochromatic Luxury', area: '350 sq. ft.' },
+        
+        { title: 'Bespoke Villa Façade', category: 'Luxury Villas', img: '/images/luxury vills/WhatsApp Image 2026-06-17 at 14.47.26.jpeg', location: 'Alibaug, Maharashtra', style: 'Modern Brutalist', area: '6,200 sq. ft.' },
+        { title: 'Travertine Courtyard Villa', category: 'Luxury Villas', img: '/images/luxury vills/WhatsApp Image 2026-06-17 at 14.47.26 (1).jpeg', location: 'Khandala, Maharashtra', style: 'Quiet Luxury', area: '7,400 sq. ft.' },
+        { title: 'The Pavilion Estate', category: 'Luxury Villas', img: '/images/luxury vills/WhatsApp Image 2026-06-17 at 14.47.27.jpeg', location: 'Alibaug, Maharashtra', style: 'Warm Minimalist', area: '8,100 sq. ft.' },
+        { title: 'Brutalist Concrete Manse', category: 'Luxury Villas', img: '/images/luxury vills/WhatsApp Image 2026-06-17 at 14.47.27 (1).jpeg', location: 'Lonavala, Maharashtra', style: 'Sleek Architectural', area: '5,800 sq. ft.' },
+        { title: 'Sunset Horizon Mansion', category: 'Luxury Villas', img: '/images/luxury vills/WhatsApp Image 2026-06-17 at 14.47.27 (2).jpeg', location: 'Goa', style: 'Bespoke Oasis', area: '9,500 sq. ft.' }
       ]
     },
     testimonials: {

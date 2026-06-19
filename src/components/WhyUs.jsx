@@ -9,23 +9,31 @@ export default function WhyUs() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 1. Entrance timeline for left column
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 75%",
-          toggleActions: "play none none none"
-        }
-      });
+      // 1. Stacking Cards Scroll Animation on Desktop
+      if (window.innerWidth >= 992) {
+        const cards = gsap.utils.toArray('.why-us-stack-card');
+        
+        cards.forEach((card, index) => {
+          // Shrink/fade card when the next card scrolls up and stacks on it
+          if (index < cards.length - 1) {
+            gsap.to(card, {
+              scale: 0.93,
+              opacity: 0.35,
+              yPercent: -8,
+              transformOrigin: "top center",
+              scrollTrigger: {
+                trigger: cards[index + 1],
+                start: "top 70%",
+                end: "top 30%",
+                scrub: true
+              }
+            });
+          }
+        });
+      }
 
-      tl.fromTo([".subtitle", ".why-us-title", ".why-us-intro", ".why-us-counters-block", ".why-us-image-wrapper"],
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1.2, ease: "power3.out", stagger: 0.15 }
-      );
-
-      // Counters animation using GSAP tween mapping to elements
+      // 2. Counters animation
       const countObj = { projects: 0, years: 0 };
-      
       gsap.to(countObj, {
         projects: 200,
         years: 15,
@@ -41,23 +49,6 @@ export default function WhyUs() {
           if (yearsRef.current) yearsRef.current.innerText = Math.floor(countObj.years) + "+";
         }
       });
-
-      // 2. Right column trust cards reveal stagger
-      gsap.fromTo(".trust-card",
-        { opacity: 0, y: 40 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.4,
-          ease: "power3.out",
-          stagger: 0.2,
-          scrollTrigger: {
-            trigger: ".trust-cards-list",
-            start: "top 75%",
-            toggleActions: "play none none none"
-          }
-        }
-      );
     }, containerRef);
 
     return () => ctx.revert();
@@ -85,7 +76,7 @@ export default function WhyUs() {
     <section ref={containerRef} id="why-us" className="why-us-section section">
       <div className="container">
         <div className="why-us-grid">
-          {/* Left Column - Headline & Detail Image */}
+          {/* Left Column - Pinned Details & Counters */}
           <div className="why-us-left">
             <span className="subtitle">THE VALUE WE BRING</span>
             <h2 className="why-us-title">The Principles of Quiet Luxury</h2>
@@ -114,11 +105,11 @@ export default function WhyUs() {
             </div>
           </div>
 
-          {/* Right Column - Trust Cards */}
+          {/* Right Column - Apple Style Stacking Cards */}
           <div className="why-us-right">
-            <div className="trust-cards-list">
+            <div className="why-us-cards-stack">
               {points.map((point, i) => (
-                <div key={i} className="trust-card">
+                <div key={i} className="why-us-stack-card">
                   <div className="trust-card-num-row">
                     <span className="trust-num">{point.num}</span>
                     <h3 className="trust-title">{point.title}</h3>
@@ -134,34 +125,43 @@ export default function WhyUs() {
       <style>{`
         .why-us-section {
           background-color: var(--color-bg-primary);
+          overflow: visible; /* CRITICAL for sticky columns to work */
         }
 
         .why-us-grid {
           display: grid;
-          grid-template-columns: 45% 55%;
+          grid-template-columns: 42% 50%;
           gap: 8%;
-          align-items: flex-start;
+          align-items: start; /* CRITICAL: start layout allows sticky element sliding */
         }
 
         .why-us-left {
+          position: sticky;
+          top: 150px;
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 1.75rem;
+          padding-bottom: 2rem;
         }
 
         .why-us-title {
           margin: 0;
+          font-size: clamp(2rem, 3.5vw, 2.75rem);
+          line-height: 1.2;
         }
 
         .why-us-intro {
-          margin-bottom: 0.5rem;
+          margin: 0;
+          color: var(--color-text-body);
+          font-size: 1.05rem;
+          line-height: 1.7;
         }
 
         /* Counters block */
         .why-us-counters-block {
           display: flex;
           gap: 3rem;
-          margin-bottom: 1rem;
+          margin-bottom: 0.5rem;
         }
 
         .counter-item {
@@ -171,7 +171,7 @@ export default function WhyUs() {
 
         .counter-num {
           font-family: var(--font-headings);
-          font-size: 3rem;
+          font-size: 3.2rem;
           color: var(--color-accent);
           line-height: 1;
           font-weight: 300;
@@ -179,61 +179,63 @@ export default function WhyUs() {
 
         .counter-label {
           font-family: var(--font-body);
-          font-size: 0.75rem;
+          font-size: 0.725rem;
           text-transform: uppercase;
           letter-spacing: 0.1em;
           color: var(--color-text-body);
-          margin-top: 0.25rem;
+          margin-top: 0.35rem;
         }
 
         .why-us-image-wrapper {
           width: 100%;
-          height: 380px;
+          height: 280px;
           overflow: hidden;
           position: relative;
+          border: 1px solid var(--color-border);
         }
 
         .why-us-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          display: block;
           transition: transform var(--transition-smooth);
         }
 
         .why-us-image-wrapper:hover .why-us-img {
-          transform: scale(1.05);
+          transform: scale(1.04);
         }
 
-        /* Trust Cards Column */
+        /* Stacking Cards Column */
         .why-us-right {
+          position: relative;
+          width: 100%;
+        }
+
+        .why-us-cards-stack {
           display: flex;
           flex-direction: column;
-          height: 100%;
-          justify-content: center;
+          width: 100%;
         }
 
-        .trust-cards-list {
+        .why-us-stack-card {
+          position: sticky;
+          top: 140px; /* Viewport sticky margin */
+          background-color: var(--color-bg-secondary);
+          border: 1px solid var(--color-border);
+          padding: 3.5rem clamp(2rem, 4vw, 3.5rem);
+          margin-bottom: 6rem; /* Creates spacing before next card stacks */
+          box-shadow: 0 15px 45px rgba(37, 53, 69, 0.04);
           display: flex;
           flex-direction: column;
+          gap: 1.25rem;
+          will-change: transform, opacity;
         }
 
-        .trust-card {
-          padding: 2.25rem 0;
-          border-bottom: 1px solid var(--color-border);
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-          transition: var(--transition-smooth);
-        }
-
-        .trust-card:first-child {
-          padding-top: 0;
-        }
-
-        .trust-card:last-child {
-          border-bottom: none;
-          padding-bottom: 0;
-        }
+        /* Incremental z-indexes for natural stacking order */
+        .why-us-stack-card:nth-child(1) { z-index: 2; }
+        .why-us-stack-card:nth-child(2) { z-index: 3; }
+        .why-us-stack-card:nth-child(3) { z-index: 4; margin-bottom: 0; } /* Remove bottom margin for last card */
 
         .trust-card-num-row {
           display: flex;
@@ -243,20 +245,24 @@ export default function WhyUs() {
 
         .trust-num {
           font-family: var(--font-headings);
-          font-size: 1.5rem;
+          font-size: 1.8rem;
           color: var(--color-accent);
           font-weight: 300;
         }
 
         .trust-title {
+          font-family: var(--font-headings);
+          font-size: 1.6rem;
           color: var(--color-text-heading);
           font-weight: 400;
+          margin: 0;
         }
 
         .trust-desc {
-          font-size: 0.95rem;
+          font-size: 1rem;
           line-height: 1.8;
           color: var(--color-text-body);
+          margin: 0;
           padding-left: 3.25rem;
         }
 
@@ -266,12 +272,26 @@ export default function WhyUs() {
             gap: 4rem;
           }
 
+          .why-us-left {
+            position: relative;
+            top: auto;
+            padding-bottom: 0;
+          }
+
           .why-us-image-wrapper {
             height: 300px;
           }
 
-          .trust-card {
-            padding: 2rem 0;
+          .why-us-stack-card {
+            position: relative;
+            top: auto;
+            padding: 2.5rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: none;
+          }
+
+          .why-us-stack-card:last-child {
+            margin-bottom: 0;
           }
 
           .trust-desc {
@@ -282,4 +302,3 @@ export default function WhyUs() {
     </section>
   );
 }
-

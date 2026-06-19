@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Portfolio({ data, layout }) {
   const containerRef = useRef(null);
@@ -13,23 +14,6 @@ export default function Portfolio({ data, layout }) {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Staggered grid cards entrance reveal
-      gsap.fromTo(".portfolio-card, .portfolio-card-masonry, .bento-card",
-        { opacity: 0, y: 50 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1.4,
-          ease: "power3.out",
-          stagger: 0.12,
-          scrollTrigger: {
-            trigger: ".portfolio-grid, .masonry-columns-container, .services-bento-grid",
-            start: "top 75%",
-            toggleActions: "play none none none"
-          }
-        }
-      );
-
       // Parallax scroll on images (for classic parallaxGrid layout)
       if (layout === 'parallaxGrid') {
         const images = gsap.utils.toArray('.parallax-img');
@@ -106,110 +90,109 @@ export default function Portfolio({ data, layout }) {
         {/* Layout: Bento Showcase */}
         {layout === 'bentoShowcase' && (
           <div className="services-bento-grid">
-            {filteredProjects.map((project, index) => {
-              const spanClass = getBentoClasses(index, filteredProjects.length);
-              return (
-                <div key={index} className={`bento-card ${spanClass}`}>
-                  <div className="bento-card-bg">
-                    <img src={project.img} alt={project.title} />
-                    <div className="bento-card-overlay"></div>
-                  </div>
-                  <div className="bento-card-content">
-                    <span className="bento-card-num" style={{ color: 'var(--color-accent)' }}>{project.category}</span>
-                    <h3 className="bento-card-title">{project.title}</h3>
-                    <p className="bento-card-desc">{project.location} • {project.style}</p>
-                  </div>
-                </div>
-              );
-            })}
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project, index) => {
+                const spanClass = getBentoClasses(index, filteredProjects.length);
+                return (
+                  <motion.div 
+                    layout
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    key={project.title} 
+                    className={`bento-card ${spanClass}`}
+                  >
+                    <div className="bento-card-bg">
+                      <img src={project.img} alt={project.title} />
+                      <div className="bento-card-overlay"></div>
+                    </div>
+                    <div className="bento-card-content">
+                      <span className="bento-card-num" style={{ color: 'var(--color-accent)' }}>{project.category}</span>
+                      <h3 className="bento-card-title">{project.title}</h3>
+                      <p className="bento-card-desc">{project.location} • {project.style}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
         )}
 
         {/* Layout: Asymmetric Masonry Columns */}
         {layout === 'masonry' && (
           <div className="masonry-columns-container">
-            {/* Column 1 */}
-            <div className="masonry-column">
-              {col1.map((project, idx) => (
-                <div key={idx} className="portfolio-card-masonry">
-                  <div className="masonry-img-wrapper">
-                    <img src={project.img} alt={project.title} className="masonry-img" />
-                  </div>
-                  <div className="masonry-content">
-                    <h3 className="masonry-title">{project.title}</h3>
-                    <span className="masonry-meta">{project.location} • {project.style}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {/* Column 2 */}
-            <div className="masonry-column">
-              {col2.map((project, idx) => (
-                <div key={idx} className="portfolio-card-masonry">
-                  <div className="masonry-img-wrapper">
-                    <img src={project.img} alt={project.title} className="masonry-img" />
-                  </div>
-                  <div className="masonry-content">
-                    <h3 className="masonry-title">{project.title}</h3>
-                    <span className="masonry-meta">{project.location} • {project.style}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {/* Column 3 */}
-            <div className="masonry-column">
-              {col3.map((project, idx) => (
-                <div key={idx} className="portfolio-card-masonry">
-                  <div className="masonry-img-wrapper">
-                    <img src={project.img} alt={project.title} className="masonry-img" />
-                  </div>
-                  <div className="masonry-content">
-                    <h3 className="masonry-title">{project.title}</h3>
-                    <span className="masonry-meta">{project.location} • {project.style}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project, idx) => {
+                const sizeClass = `size-${idx % 8}`;
+                return (
+                  <motion.div 
+                    layout
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    key={project.title} 
+                    className={`portfolio-card-masonry ${sizeClass}`}
+                  >
+                    <div className="masonry-img-wrapper" style={{ position: 'relative', overflow: 'hidden', width: '100%' }}>
+                      <img src={project.img} alt={project.title} className="masonry-img" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    </div>
+                    <div className="masonry-content">
+                      <h3 className="masonry-title">{project.title}</h3>
+                      <span className="masonry-meta">{project.location} • {project.style}</span>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
         )}
 
         {/* Layout: Parallax Grid (Classic) */}
         {layout === 'parallaxGrid' && (
           <div className="portfolio-grid">
-            {filteredProjects.map((project, index) => {
-              return (
-                <div 
-                  key={index} 
-                  className="portfolio-card"
-                >
-                  <div className="portfolio-img-container">
-                    <img 
-                      src={project.img} 
-                      alt={project.title} 
-                      className="portfolio-img parallax-img"
-                    />
-                    
-                    {/* Hover Overlay detail */}
-                    <div className="portfolio-hover-overlay">
-                      <div className="portfolio-hover-content">
-                        <span className="portfolio-hover-cat">{project.category}</span>
-                        <h3 className="portfolio-hover-title">{project.title}</h3>
-                        <span className="portfolio-hover-meta">{project.location}</span>
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project) => {
+                return (
+                  <motion.div 
+                    layout
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    key={project.title} 
+                    className="portfolio-card"
+                  >
+                    <div className="portfolio-img-container">
+                      <img 
+                        src={project.img} 
+                        alt={project.title} 
+                        className="portfolio-img parallax-img"
+                      />
+                      
+                      {/* Hover Overlay detail */}
+                      <div className="portfolio-hover-overlay">
+                        <div className="portfolio-hover-content">
+                          <span className="portfolio-hover-cat">{project.category}</span>
+                          <h3 className="portfolio-hover-title">{project.title}</h3>
+                          <span className="portfolio-hover-meta">{project.location}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Text Details */}
-                  <div className="portfolio-info-bottom">
-                    <h3 className="portfolio-bottom-title">{project.title}</h3>
-                    <div className="portfolio-bottom-row">
-                      <span>{project.style}</span>
-                      <span>{project.area}</span>
+                    {/* Text Details */}
+                    <div className="portfolio-info-bottom">
+                      <h3 className="portfolio-bottom-title">{project.title}</h3>
+                      <div className="portfolio-bottom-row">
+                        <span>{project.style}</span>
+                        <span>{project.area}</span>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              );
-            })}
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
         )}
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function Navbar() {
+export default function Navbar({ heroLayout }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -28,8 +28,10 @@ export default function Navbar() {
     { name: 'FAQ', href: '#faq' },
   ];
 
+  const isDarkHero = heroLayout === 'luxuryEditorial' || heroLayout === 'fullBleed';
+
   return (
-    <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''}`}>
+    <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''} ${isDarkHero && !scrolled ? 'navbar-dark-bg' : ''} ${isOpen ? 'navbar-open' : ''}`}>
       <div className="nav-container">
         {/* Brand Logo - Horizontal SVG for header */}
         <a href="#home" className="nav-logo">
@@ -125,7 +127,7 @@ export default function Navbar() {
           top: 0;
           left: 0;
           width: 100%;
-          height: 90px;
+          height: 70px;
           z-index: 1000;
           background-color: transparent;
           border-bottom: 1px solid transparent;
@@ -133,7 +135,7 @@ export default function Navbar() {
         }
 
         .navbar-scrolled {
-          height: 80px;
+          height: 60px;
           background-color: rgba(255, 255, 255, 0.95); /* Adjusted to new White Background */
           backdrop-filter: blur(10px);
           border-bottom-color: var(--color-border);
@@ -156,14 +158,14 @@ export default function Navbar() {
         }
 
         .nav-logo img {
-          height: 48px;
+          height: 36px;
           width: auto;
           object-fit: contain;
           transition: var(--transition-smooth);
         }
 
         .navbar-scrolled .nav-logo img {
-          height: 42px;
+          height: 28px;
         }
 
         .nav-links {
@@ -181,6 +183,7 @@ export default function Navbar() {
           color: var(--color-text-heading);
           position: relative;
           padding: 0.5rem 0;
+          transition: color 0.4s ease;
         }
 
         .nav-link::after {
@@ -242,6 +245,7 @@ export default function Navbar() {
           height: 2px;
           width: 100%;
           background-color: var(--color-text-heading);
+          transition: background-color 0.4s ease;
         }
 
         .nav-drawer {
@@ -256,7 +260,7 @@ export default function Navbar() {
           z-index: 999;
           display: flex;
           flex-direction: column;
-          padding: 120px 40px 40px;
+          padding: 90px 40px 40px;
         }
 
         .drawer-links {
@@ -273,6 +277,26 @@ export default function Navbar() {
           font-weight: 300;
         }
 
+        @media (min-width: 992px) {
+          .navbar-dark-bg:not(.navbar-open) .nav-link {
+            color: #FFFFFF;
+          }
+          .navbar-dark-bg:not(.navbar-open) .btn-nav {
+            color: #FFFFFF;
+            border-color: #FFFFFF;
+          }
+          .navbar-dark-bg:not(.navbar-open) .btn-nav:hover {
+            background-color: #FFFFFF;
+            color: var(--color-text-heading);
+          }
+          .navbar-dark-bg:not(.navbar-open) .nav-logo img {
+            filter: brightness(0) invert(1);
+          }
+          .navbar-dark-bg:not(.navbar-open) .hamburger-line {
+            background-color: #FFFFFF;
+          }
+        }
+
         @media (max-width: 991px) {
           .nav-links, .nav-cta-group {
             display: none;
@@ -283,14 +307,14 @@ export default function Navbar() {
           }
 
           .navbar {
-            height: 75px;
+            height: 60px;
             background-color: rgba(255, 255, 255, 0.95); /* Adjusted to new White Background */
             backdrop-filter: blur(10px);
             border-bottom-color: var(--color-border);
           }
 
           .nav-logo img {
-            height: 38px;
+            height: 28px;
           }
         }
       `}</style>

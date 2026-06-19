@@ -76,7 +76,7 @@ function App() {
     <>
       <CustomCursor />
       <FloatingWhatsApp />
-      <Navbar />
+      <Navbar heroLayout={layoutConfig.hero} />
       <main className="main-content">
         <Hero 
           data={data.hero} 
