@@ -30,7 +30,7 @@ gsap.registerPlugin(ScrollTrigger);
 function App() {
   const [currentNiche, setCurrentNiche] = useState('interior'); // 'interior' | 'architecture' | 'agency' | 'saas'
   const [layoutConfig, setLayoutConfig] = useState({
-    hero: 'split',         // 'split' | 'fullBleed' | 'asymmetric' | 'stacked'
+    hero: 'luxuryEditorial', // 'luxuryEditorial' | 'split' | 'fullBleed' | 'asymmetric' | 'stacked'
     services: 'bento',     // 'staggeredGrid' | 'bento' | 'stackedList'
     philosophy: 'sliding', // 'sliding' | 'editorial'
     portfolio: 'masonry',  // 'parallaxGrid' | 'masonry' | 'bentoShowcase'
@@ -77,8 +77,12 @@ function App() {
       <CustomCursor />
       <FloatingWhatsApp />
       <Navbar />
-      <main>
-        <Hero data={data.hero} layout={layoutConfig.hero} />
+      <main className="main-content">
+        <Hero 
+          data={data.hero} 
+          portfolio={data.portfolio?.list} 
+          layout={layoutConfig.hero} 
+        />
         <WhyUs data={data.whyUs} />
         <Services data={data.services} layout={layoutConfig.services} />
         <Philosophy data={data.philosophy} layout={layoutConfig.philosophy} />

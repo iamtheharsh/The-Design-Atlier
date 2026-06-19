@@ -21,6 +21,7 @@ export default function LayoutConfigurator({
       section: 'Hero Layout',
       key: 'hero',
       options: [
+        { value: 'luxuryEditorial', label: 'Luxury Editorial' },
         { value: 'split', label: 'Split Screen' },
         { value: 'fullBleed', label: 'Full Bleed' },
         { value: 'asymmetric', label: 'Asymmetric' },
